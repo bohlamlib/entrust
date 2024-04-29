@@ -1,25 +1,25 @@
 # ENTRUST (Laravel 6 Package)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 6**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 11**.
 
 ## Contents
 
 - [Installation](#installation)
 - [Configuration](#configuration)
-    - [User relation to roles](#user-relation-to-roles)
-    - [Models](#models)
-        - [Role](#role)
-        - [Permission](#permission)
-        - [User](#user)
-        - [Soft Deleting](#soft-deleting)
+  - [User relation to roles](#user-relation-to-roles)
+  - [Models](#models)
+    - [Role](#role)
+    - [Permission](#permission)
+    - [User](#user)
+    - [Soft Deleting](#soft-deleting)
 - [Usage](#usage)
-    - [Concepts](#concepts)
-        - [Checking for Roles & Permissions](#checking-for-roles--permissions)
-        - [User ability](#user-ability)
-    - [Blade templates](#blade-templates)
-    - [Middleware](#middleware)
-    - [Short syntax route filter](#short-syntax-route-filter)
-    - [Route filter](#route-filter)
+  - [Concepts](#concepts)
+    - [Checking for Roles & Permissions](#checking-for-roles--permissions)
+    - [User ability](#user-ability)
+  - [Blade templates](#blade-templates)
+  - [Middleware](#middleware)
+  - [Short syntax route filter](#short-syntax-route-filter)
+  - [Route filter](#route-filter)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 - [Contribution guidelines](#contribution-guidelines)
@@ -27,31 +27,31 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 
 ## Installation
 
-1) In order to install Laravel 6 Entrust, just add the following to your composer.json. Then run `composer update`:
+1. In order to install Laravel 6 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
 "gghughunishvili/entrust": "^2.0"
 ```
 
-2) Open your `config/app.php` and add the following to the `providers` array:
+2. Open your `config/app.php` and add the following to the `providers` array:
 
 ```php
 Zizaco\Entrust\EntrustServiceProvider::class,
 ```
 
-3) In the same `config/app.php` and add the following to the `aliases ` array:
+3. In the same `config/app.php` and add the following to the `aliases ` array:
 
 ```php
 'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
 ```
 
-4) Run the command below to publish the package config file `config/entrust.php`:
+4. Run the command below to publish the package config file `config/entrust.php`:
 
 ```shell
 php artisan vendor:publish
 ```
 
-5) Open your `config/auth.php` and add the following to it:
+5. Open your `config/auth.php` and add the following to it:
 
 ```php
 'providers' => [
@@ -63,7 +63,7 @@ php artisan vendor:publish
 ],
 ```
 
-6)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
+6.  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
 
 ```php
     'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
@@ -96,6 +96,7 @@ php artisan migrate
 ```
 
 After the migration, four new tables will be present:
+
 - `roles` &mdash; stores role records
 - `permissions` &mdash; stores permission records
 - `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
@@ -118,8 +119,9 @@ class Role extends EntrustRole
 ```
 
 The `Role` model has three main attributes:
+
 - `name` &mdash; Unique name for the Role, used for looking up role information in the application layer. For example: "admin", "owner", "employee".
-- `display_name` &mdash; Human readable name for the Role. Not necessarily unique and optional. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
+- `display_name` &mdash; Human readable name for the Role. Not necessarily unique and optional. For example: "User Administrator", "Project Owner", "Widget Co. Employee".
 - `description` &mdash; A more detailed explanation of what the Role does. Also optional.
 
 Both `display_name` and `description` are optional; their fields are nullable in the database.
@@ -139,6 +141,7 @@ class Permission extends EntrustPermission
 ```
 
 The `Permission` model has the same three attributes as the `Role`:
+
 - `name` &mdash; Unique name for the permission, used for looking up permission information in the application layer. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
 - `display_name` &mdash; Human readable name for the permission. Not necessarily unique and optional. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
 - `description` &mdash; A more detailed explanation of the Permission.
@@ -192,6 +195,7 @@ $role->forceDelete(); // Now force delete will work regardless of whether the pi
 ## Usage
 
 ### Concepts
+
 Let's start by creating the following `Role`s and `Permission`s:
 
 ```php
@@ -298,17 +302,18 @@ $user->can("*_users"); // true
 ```
 
 To filter users according a specific role, you may use withRole() scope, for example to retrieve all admins:
+
 ```
 $admins = User::withRole('admin')->get();
 // or maybe with a relationsship
 $company->users()->withRole('admin')->get();
 ```
 
-
 #### User ability
 
 More advanced checking can be done using the awesome `ability` function.
 It takes in three parameters (roles, permissions, options):
+
 - `roles` is a set of roles to check.
 - `permissions` is a set of permissions to check.
 
@@ -363,6 +368,7 @@ var_dump($allValidations);
 // }
 
 ```
+
 The `Entrust` class has a shortcut to `ability()` for the currently logged in user:
 
 ```php
@@ -398,6 +404,7 @@ Three directives are available for use within your Blade templates. What you giv
 ### Middleware
 
 You can use a middleware to filter routes and route groups by permission or role
+
 ```php
 Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
     Route::get('/', 'AdminController@welcome');
@@ -405,17 +412,20 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
 });
 ```
 
-It is possible to use pipe symbol as *OR* operator:
+It is possible to use pipe symbol as _OR_ operator:
+
 ```php
 'middleware' => ['role:admin|root']
 ```
 
-To emulate *AND* functionality just use multiple instances of middleware
+To emulate _AND_ functionality just use multiple instances of middleware
+
 ```php
 'middleware' => ['role:owner', 'role:writer']
 ```
 
 For more complex situations use `ability` middleware which accepts 3 parameters: roles, permissions, validate_all
+
 ```php
 'middleware' => ['ability:admin|owner,create-post|edit-user,true']
 ```
@@ -529,9 +539,11 @@ If your app uses a custom namespace then you'll need to tell entrust where your 
 ```
 'role' => 'Custom\Namespace\Role'
 ```
+
 ```
 'permission' => 'Custom\Namespace\permission'
 ```
+
 ## License
 
 Entrust is free software distributed under the terms of the MIT license.
